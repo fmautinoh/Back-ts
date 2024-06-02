@@ -1,11 +1,15 @@
 import { Response } from "express";
 
+const handleHttpError = (res: Response, statusCode: number, message: string) => {
+  res.status(statusCode).send({ error: message });
+};
+
 const handleHttpData = (res: Response, error: string) => {
-  res.status(400).send({ error });
+  handleHttpError(res, 400, error);
 };
 
 const handleHttpServer = (res: Response, error: string) => {
-  res.status(500).send({ error });
+  handleHttpError(res, 500, error);
 };
 
 const handleDBError = (error: Error): { error: string } => {
@@ -15,6 +19,13 @@ const handleDBError = (error: Error): { error: string } => {
     return { error: "Unknown database error" };
   }
 };
+class CustomError extends Error {
+  statusCode: number;
+  
+  constructor(statusCode: number, message: string) {
+    super(message);
+    this.statusCode = statusCode;
+  }
+}
 
-
-export { handleHttpData, handleHttpServer,handleDBError };
+export { handleHttpData, handleHttpServer,handleDBError,handleHttpError, CustomError };
