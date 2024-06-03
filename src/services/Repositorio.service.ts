@@ -1,10 +1,6 @@
 import Documento from "../models/Documento.model";
 import { IDocumento } from "../interfaces/Documento.Interface";
-import {
-  handleDBError,
-  handleHttpError,
-  handleHttpServer,
-} from "../utils/error.handle";
+import { handleDBError } from "../utils/error.handle";
 
 class CustomError extends Error {
   statusCode: number;
@@ -20,7 +16,7 @@ class DocumentoService {
     asunto: string,
     num_doc: string,
     niv_acc_min: string,
-    pathDoc:string,
+    pathDoc: string,
     id_tip: number,
     id_usu: number
   ): Promise<IDocumento> {
@@ -43,67 +39,66 @@ class DocumentoService {
     }
   }
 
-  static async UpdateDoc(
+  static async updateDoc(
     id: number,
-    newData: Partial<IDocumento>
+    newData: Partial<IDocumento>,
+    pathDoc?: string
   ): Promise<IDocumento | null> {
     try {
       const docUpdate = await Documento.findByPk(id);
       if (!docUpdate) {
-        new CustomError(404, "Document not found");
+        throw new CustomError(404, "Document not found");
       }
-      await docUpdate?.update(newData);
+      if (pathDoc) {
+        newData.pathDoc = pathDoc;
+      }
+      await docUpdate.update(newData);
       return docUpdate;
     } catch (error) {
       if (error instanceof Error) {
         const formattedError = handleDBError(error);
         throw new Error(formattedError.error);
       }
-      throw new Error("Unknown error updating user");
+      throw new Error("Unknown error updating document");
     }
   }
 
-  static async GetDocument(): Promise<IDocumento[]> {
+  static async deleteDoc(id: number): Promise<boolean> {
+    try {
+      const doc = await Documento.findByPk(id);
+      if (!doc) {
+        throw new CustomError(404, "Document not found");
+      }
+      await doc.destroy();
+      return true;
+    } catch (error) {
+      if (error instanceof Error) {
+        const formattedError = handleDBError(error);
+        throw new Error(formattedError.error);
+      }
+      throw new Error("Unknown error deleting document");
+    }
+  }
+
+  static async getDocById(id: number): Promise<IDocumento | null> {
+    try {
+      const documento = await Documento.findByPk(id);
+      if (!documento) {
+        throw new CustomError(404, "Document not found");
+      }
+      return documento;
+    } catch (error) {
+      if (error instanceof Error) {
+        const formattedError = handleDBError(error);
+        throw new Error(formattedError.error);
+      }
+      throw new Error("Unknown error getting document");
+    }
+  }
+
+  static async getAllDocs(): Promise<IDocumento[]> {
     try {
       const documentos = await Documento.findAll();
-      if (!documentos) {
-        new CustomError(404, "Error al cargar los documentos");
-      }
-      return documentos;
-    } catch (error) {
-      if (error instanceof Error) {
-        const formattedError = handleDBError(error);
-        throw new Error(formattedError.error);
-      }
-      throw new Error("Unknown error getting documents");
-    }
-  }
-
-  static async UpdateDocument(
-    id: number,
-    newData: Partial<IDocumento>
-  ): Promise<IDocumento | null> {
-    try {
-      const documentos = await Documento.findByPk(id);
-      if (!documentos) {
-        new CustomError(404, "Error al cargar los documentos");
-      }
-      await documentos?.update(newData);
-      return documentos;
-    } catch (error) {
-      if (error instanceof Error) {
-        const formattedError = handleDBError(error);
-        throw new Error(formattedError.error);
-      }
-      throw new Error("Unknown error getting documents");
-    }
-  }
-  static async GetDocumentId(id: number): Promise<IDocumento | null> {
-    try {
-      const documentos = await Documento.findByPk(id);
-      if (!documentos) {
-        new CustomError(404, "Error al cargar los documentos");
-      }
       return documentos;
     } catch (error) {
       if (error instanceof Error) {
