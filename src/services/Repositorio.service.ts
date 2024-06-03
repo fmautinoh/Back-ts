@@ -20,6 +20,7 @@ class DocumentoService {
     asunto: string,
     num_doc: string,
     niv_acc_min: string,
+    pathDoc:string,
     id_tip: number,
     id_usu: number
   ): Promise<IDocumento> {
@@ -28,6 +29,7 @@ class DocumentoService {
         asunto,
         num_doc,
         niv_acc_min,
+        pathDoc,
         id_tip,
         id_usu,
       });

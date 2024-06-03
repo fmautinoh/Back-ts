@@ -1,4 +1,4 @@
-import sequelize from '../conf/database';
+import sequelize from '../config/database';
 import Persona from '../models/Persona.model';
 import Cargo from '../models/Cargo.model';
 import Usuario from '../models/Usuario.model';
