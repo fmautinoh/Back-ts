@@ -7,4 +7,4 @@ router.post("/", logMiddleware, login);
 
 router.get("/", logMiddleware, getUser);
 
-export { router };
+export default router;

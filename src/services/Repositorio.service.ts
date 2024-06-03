@@ -31,11 +31,7 @@ class DocumentoService {
       });
       return documentoNuevo;
     } catch (error) {
-      if (error instanceof Error) {
-        const formattedError = handleDBError(error);
-        throw new Error(formattedError.error);
-      }
-      throw new Error("Error desconocido");
+      throw new CustomError(500, "Error creating document");
     }
   }
 
@@ -55,11 +51,7 @@ class DocumentoService {
       await docUpdate.update(newData);
       return docUpdate;
     } catch (error) {
-      if (error instanceof Error) {
-        const formattedError = handleDBError(error);
-        throw new Error(formattedError.error);
-      }
-      throw new Error("Unknown error updating document");
+      throw new CustomError(500, "Error updating document");
     }
   }
 
@@ -72,40 +64,28 @@ class DocumentoService {
       await doc.destroy();
       return true;
     } catch (error) {
-      if (error instanceof Error) {
-        const formattedError = handleDBError(error);
-        throw new Error(formattedError.error);
-      }
-      throw new Error("Unknown error deleting document");
+      throw new CustomError(500, "Error deleting document");
     }
   }
 
   static async getDocById(id: number): Promise<IDocumento | null> {
     try {
-      const documento = await Documento.findByPk(id);
-      if (!documento) {
+      const doc = await Documento.findByPk(id);
+      if (!doc) {
         throw new CustomError(404, "Document not found");
       }
-      return documento;
+      return doc;
     } catch (error) {
-      if (error instanceof Error) {
-        const formattedError = handleDBError(error);
-        throw new Error(formattedError.error);
-      }
-      throw new Error("Unknown error getting document");
+      throw new CustomError(500, "Error fetching document");
     }
   }
 
   static async getAllDocs(): Promise<IDocumento[]> {
     try {
-      const documentos = await Documento.findAll();
-      return documentos;
+      const docs = await Documento.findAll();
+      return docs;
     } catch (error) {
-      if (error instanceof Error) {
-        const formattedError = handleDBError(error);
-        throw new Error(formattedError.error);
-      }
-      throw new Error("Unknown error getting documents");
+      throw new CustomError(500, "Error fetching documents");
     }
   }
 }

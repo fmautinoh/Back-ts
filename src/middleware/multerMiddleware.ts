@@ -14,17 +14,6 @@ const storage = diskStorage({
   },
 });
 
-const fileFilter = (req: Request, file: Express.Multer.File, cb: any) => {
-  if (file.mimetype === "application/pdf") {
-    cb(null, true);
-  } else {
-    cb(new Error("Invalid file type, only PDFs are allowed"), false);
-  }
-};
-
-const multerMiddleware = multer({ 
-  storage,
-  fileFilter
-});
+const multerMiddleware = multer({ storage });
 
 export default multerMiddleware;
