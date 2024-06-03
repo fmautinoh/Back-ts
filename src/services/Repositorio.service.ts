@@ -76,8 +76,41 @@ class DocumentoService {
       throw new Error("Unknown error getting documents");
     }
   }
-  
-  
+
+  static async UpdateDocument(
+    id: number,
+    newData: Partial<IDocumento>
+  ): Promise<IDocumento | null> {
+    try {
+      const documentos = await Documento.findByPk(id);
+      if (!documentos) {
+        new CustomError(404, "Error al cargar los documentos");
+      }
+      await documentos?.update(newData);
+      return documentos;
+    } catch (error) {
+      if (error instanceof Error) {
+        const formattedError = handleDBError(error);
+        throw new Error(formattedError.error);
+      }
+      throw new Error("Unknown error getting documents");
+    }
+  }
+  static async GetDocumentId(id: number): Promise<IDocumento | null> {
+    try {
+      const documentos = await Documento.findByPk(id);
+      if (!documentos) {
+        new CustomError(404, "Error al cargar los documentos");
+      }
+      return documentos;
+    } catch (error) {
+      if (error instanceof Error) {
+        const formattedError = handleDBError(error);
+        throw new Error(formattedError.error);
+      }
+      throw new Error("Unknown error getting documents");
+    }
+  }
 }
 
 export default DocumentoService;
