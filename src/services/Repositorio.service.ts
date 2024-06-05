@@ -88,6 +88,21 @@ class DocumentoService {
       throw new CustomError(500, "Error fetching documents");
     }
   }
+  static async getAllDocsPaginated(
+    page: number,
+    pageSize: number
+  ): Promise<{ docs: IDocumento[]; total: number }> {
+    try {
+      const offset = (page - 1) * pageSize;
+      const { count, rows } = await Documento.findAndCountAll({
+        offset: offset,
+        limit: pageSize,
+      });
+      return { docs: rows, total: count };
+    } catch (error) {
+      throw new CustomError(500, "Error fetching documents");
+    }
+  }
 }
 
 export default DocumentoService;

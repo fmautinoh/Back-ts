@@ -1,6 +1,10 @@
 import { Request, Response } from "express";
 import DocumentoService from "../services/Repositorio.service";
-import { CustomError, handleHttpData, handleHttpServer } from "../utils/error.handle";
+import {
+  CustomError,
+  handleHttpData,
+  handleHttpServer,
+} from "../utils/error.handle";
 
 const createDocController = async (req: Request, res: Response) => {
   const { asunto, num_doc, niv_acc_min, id_tip, id_usu } = req.body;
@@ -11,7 +15,14 @@ const createDocController = async (req: Request, res: Response) => {
   }
 
   try {
-    const newDoc = await DocumentoService.createDoc(asunto, num_doc, niv_acc_min, pathDoc, id_tip, id_usu);
+    const newDoc = await DocumentoService.createDoc(
+      asunto,
+      num_doc,
+      niv_acc_min,
+      pathDoc,
+      id_tip,
+      id_usu
+    );
     res.status(201).send(newDoc);
   } catch (error) {
     if (error instanceof CustomError) {
@@ -27,7 +38,11 @@ const updateDocController = async (req: Request, res: Response) => {
   const pathDoc = req.file?.path;
 
   try {
-    const updatedDoc = await DocumentoService.updateDoc(parseInt(id), newData, pathDoc);
+    const updatedDoc = await DocumentoService.updateDoc(
+      parseInt(id),
+      newData,
+      pathDoc
+    );
     if (!updatedDoc) {
       return handleHttpData(res, "Document not found");
     }
@@ -73,6 +88,33 @@ const getDocByIdController = async (req: Request, res: Response) => {
     return handleHttpServer(res, "Internal server error");
   }
 };
+const Pagination = async (req: Request, res: Response) => {
+  const page = parseInt(req.query.page as string) || 1;
+  const pageSize = 6;
+
+  try {
+    const { docs, total } = await DocumentoService.getAllDocsPaginated(
+      page,
+      pageSize
+    );
+    const totalPages = Math.ceil(total / pageSize);
+
+    res.status(200).send({
+      docs,
+      pagination: {
+        currentPage: page,
+        totalPages: totalPages,
+        pageSize: pageSize,
+        totalDocs: total,
+      },
+    });
+  } catch (error) {
+    if (error instanceof CustomError) {
+      return handleHttpData(res, error.message);
+    }
+    return handleHttpServer(res, "Internal server error");
+  }
+};
 
 const getAllDocsController = async (req: Request, res: Response) => {
   try {
@@ -91,5 +133,6 @@ export {
   updateDocController,
   deleteDocController,
   getDocByIdController,
-  getAllDocsController
+  getAllDocsController,
+  Pagination,
 };
