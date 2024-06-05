@@ -8,9 +8,7 @@ const storage = diskStorage({
     cb(null, PATH_STORAGE);
   },
   filename(req: Request, file: Express.Multer.File, cb: any) {
-    const ext = file.originalname.split(".").pop();
-    const fileNameRandom = `file-${Date.now()}.${ext}`;
-    cb(null, fileNameRandom);
+    cb(null, file.originalname); // Guardar con el mismo nombre y extensión del archivo original
   },
 });
 

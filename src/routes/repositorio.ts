@@ -14,13 +14,13 @@ const router = Router();
 
 router.post(
   "/",
-  multerMiddleware.single("file"),
+  multerMiddleware.single("pathDoc"),
   checkJwt,
   createDocController
 );
 router.put(
   "/documento/:id",
-  multerMiddleware.single("file"),
+  multerMiddleware.single("pathDoc"),
   checkJwt,
   updateDocController
 );

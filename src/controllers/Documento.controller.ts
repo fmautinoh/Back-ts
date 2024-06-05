@@ -8,7 +8,16 @@ import {
 
 const createDocController = async (req: Request, res: Response) => {
   const { asunto, num_doc, niv_acc_min, id_tip, id_usu } = req.body;
-  const pathDoc = req.file?.path;
+  const pathDoc = req.file?.path || "";
+
+  const data = {
+    asunto,
+    num_doc,
+    niv_acc_min,
+    pathDoc,
+    id_tip,
+    id_usu,
+  };
 
   if (!pathDoc) {
     return res.status(400).send({ error: "File is required" });
@@ -16,13 +25,15 @@ const createDocController = async (req: Request, res: Response) => {
 
   try {
     const newDoc = await DocumentoService.createDoc(
-      asunto,
-      num_doc,
-      niv_acc_min,
-      pathDoc,
-      id_tip,
-      id_usu
+      data.asunto,
+      data.num_doc,
+      data.niv_acc_min,
+      data.pathDoc,
+      data.id_tip,
+      data.id_usu
     );
+
+    const respuesta = {};
     res.status(201).send(newDoc);
   } catch (error) {
     if (error instanceof CustomError) {

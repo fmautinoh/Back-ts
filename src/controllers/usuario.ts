@@ -34,6 +34,7 @@ const login = async (req: Request, res: Response) => {
       const respuesta = {
         username: Uservice.username,
         cargo: Uservice.id_car,
+        id_usu: Uservice.id_usu,
         token
       };
       res.send(respuesta);
