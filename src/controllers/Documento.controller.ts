@@ -35,12 +35,12 @@ const createDocController = async (req: Request, res: Response) => {
     );
 
     const respuesta = {
-      id_doc:newDoc.id_doc,
+      id_doc: newDoc.id_doc,
       asunto: newDoc.asunto,
       num_doc: newDoc.num_doc,
       //niv_acc_min: newDoc.niv_acc_min,
-      id_tip:newDoc.id_tip,
-    }
+      id_tip: newDoc.id_tip,
+    };
 
     res.status(201).send(respuesta);
   } catch (error) {

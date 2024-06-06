@@ -9,6 +9,7 @@ import {
 } from "../controllers/Documento.controller";
 import { checkJwt } from "../middleware/session";
 import multerMiddleware from "../middleware/multerMiddleware";
+import { logMiddleware } from "../middleware/log";
 
 const router = Router();
 
@@ -16,17 +17,19 @@ router.post(
   "/",
   multerMiddleware.single("pathDoc"),
   checkJwt,
+  logMiddleware,
   createDocController
 );
 router.put(
   "/documento/:id",
   multerMiddleware.single("pathDoc"),
   checkJwt,
+  logMiddleware,
   updateDocController
 );
-router.delete("/documento/:id", checkJwt, deleteDocController);
-router.get("/documento/:id", checkJwt, getDocByIdController);
-router.get("/", checkJwt, getAllDocsController);
-router.get("/documentos-paginated", checkJwt, Pagination);
+router.delete("/documento/:id", checkJwt, logMiddleware, deleteDocController);
+router.get("/documento/:id", checkJwt, logMiddleware, getDocByIdController);
+//router.get("/", checkJwt, getAllDocsController);
+router.get("/documentos-paginated", checkJwt, logMiddleware, Pagination);
 ///documentos-paginated?page=1
 export default router;
