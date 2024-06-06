@@ -8,7 +8,7 @@ const storage = diskStorage({
     cb(null, PATH_STORAGE);
   },
   filename(req: Request, file: Express.Multer.File, cb: any) {
-    cb(null, file.originalname); // Guardar con el mismo nombre y extensión del archivo original
+    cb(null, file.originalname);
   },
 });
 

@@ -5,6 +5,7 @@ import {
   handleHttpData,
   handleHttpServer,
 } from "../utils/error.handle";
+import { RequestExt } from "../interfaces/req-ext";
 
 const createDocController = async (req: Request, res: Response) => {
   const { asunto, num_doc, niv_acc_min, id_tip, id_usu } = req.body;
@@ -33,7 +34,14 @@ const createDocController = async (req: Request, res: Response) => {
       data.id_usu
     );
 
-    const respuesta = {};
+    const respuesta = {
+      id_doc:newDoc.id_doc,
+      asunto: newDoc.asunto,
+      num_doc: newDoc.num_doc,
+      //niv_acc_min: newDoc.niv_acc_min,
+      id_tip:newDoc.id_tip,
+    }
+
     res.status(201).send(newDoc);
   } catch (error) {
     if (error instanceof CustomError) {
@@ -83,13 +91,18 @@ const deleteDocController = async (req: Request, res: Response) => {
   }
 };
 
-const getDocByIdController = async (req: Request, res: Response) => {
+const getDocByIdController = async (req: RequestExt, res: Response) => {
   const { id } = req.params;
 
   try {
     const doc = await DocumentoService.getDocById(parseInt(id));
     if (!doc) {
       return handleHttpData(res, "Document not found");
+    }
+    // Filtrar según nivel de acceso
+    const docNivAccMin = doc.niv_acc_min ?? 0;
+    if (req.user?.id_car < docNivAccMin) {
+      return res.status(403).send("Access denied");
     }
     res.status(200).send(doc);
   } catch (error) {
@@ -99,7 +112,8 @@ const getDocByIdController = async (req: Request, res: Response) => {
     return handleHttpServer(res, "Internal server error");
   }
 };
-const Pagination = async (req: Request, res: Response) => {
+
+const Pagination = async (req: RequestExt, res: Response) => {
   const page = parseInt(req.query.page as string) || 1;
   const pageSize = 6;
 
@@ -110,14 +124,22 @@ const Pagination = async (req: Request, res: Response) => {
     );
     const totalPages = Math.ceil(total / pageSize);
 
+    // Filtrar los documentos según el nivel de acceso
+    const filteredDocs = docs
+      .filter((doc: any) => req.user?.id_car >= (doc.niv_acc_min ?? 0))
+      .map((doc: any) => ({
+        id_doc: doc.id_doc,
+        asunto: doc.asunto,
+        num_doc: doc.num_doc,
+        niv_acc_min: doc.niv_acc_min,
+      }));
+
     res.status(200).send({
-      docs,
-      pagination: {
-        currentPage: page,
-        totalPages: totalPages,
-        pageSize: pageSize,
-        totalDocs: total,
-      },
+      docs: filteredDocs,
+      currentPage: page,
+      totalPages: totalPages,
+      pageSize: pageSize,
+      totalDocs: total,
     });
   } catch (error) {
     if (error instanceof CustomError) {
@@ -127,10 +149,14 @@ const Pagination = async (req: Request, res: Response) => {
   }
 };
 
-const getAllDocsController = async (req: Request, res: Response) => {
+const getAllDocsController = async (req: RequestExt, res: Response) => {
   try {
     const docs = await DocumentoService.getAllDocs();
-    res.status(200).send(docs);
+    // Filtrar los documentos según el nivel de acceso
+    const filteredDocs = docs.filter(
+      (doc) => req.user?.id_car >= (doc.niv_acc_min ?? 0)
+    );
+    res.status(200).send(filteredDocs);
   } catch (error) {
     if (error instanceof CustomError) {
       return handleHttpData(res, error.message);
