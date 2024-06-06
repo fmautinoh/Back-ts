@@ -42,7 +42,7 @@ const createDocController = async (req: Request, res: Response) => {
       id_tip:newDoc.id_tip,
     }
 
-    res.status(201).send(newDoc);
+    res.status(201).send(respuesta);
   } catch (error) {
     if (error instanceof CustomError) {
       return handleHttpData(res, error.message);
