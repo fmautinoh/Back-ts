@@ -165,6 +165,21 @@ const getAllDocsController = async (req: RequestExt, res: Response) => {
   }
 };
 
+const getDocFileController = async (req: Request, res: Response): Promise<void> => {
+  const { id } = req.params;
+
+  try {
+    const { filePath, fileName } = await DocumentoService.getDocFileById(parseInt(id));
+    res.download(filePath, fileName);
+  } catch (error) {
+    if (error instanceof CustomError) {
+      handleHttpData(res, error.message);
+    } else {
+      handleHttpServer(res, "Internal server error");
+    }
+  }
+};
+
 export {
   createDocController,
   updateDocController,
@@ -172,4 +187,5 @@ export {
   getDocByIdController,
   getAllDocsController,
   Pagination,
+  getDocFileController,
 };

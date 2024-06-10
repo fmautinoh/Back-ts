@@ -1,6 +1,7 @@
 import Documento from "../models/Documento.model";
 import { IDocumento } from "../interfaces/Documento.Interface";
-import { handleDBError } from "../utils/error.handle";
+import fs from 'fs';
+import path from 'path';
 
 class CustomError extends Error {
   statusCode: number;
@@ -101,6 +102,35 @@ class DocumentoService {
       return { docs: rows, total: count };
     } catch (error) {
       throw new CustomError(500, "Error fetching documents");
+    }
+  }
+
+  static async getDocFileById(
+    id: number
+  ): Promise<{ filePath: string; fileName: string }> {
+    try {
+      const doc = await Documento.findByPk(id);
+      if (!doc) {
+        throw new CustomError(404, "Document not found");
+      }
+
+      const filePath = doc.pathDoc;
+      if (!filePath) {
+        throw new CustomError(404, "Document file not found");
+      }
+
+      // Verify if the file exists
+      if (!fs.existsSync(filePath)) {
+        throw new CustomError(
+          404,
+          "Document file does not exist on the server"
+        );
+      }
+
+      const fileName = path.basename(filePath);
+      return { filePath, fileName };
+    } catch (error) {
+      throw new CustomError(500, "Error fetching document file");
     }
   }
 }

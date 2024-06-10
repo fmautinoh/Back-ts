@@ -6,6 +6,7 @@ import {
   getDocByIdController,
   getAllDocsController,
   Pagination,
+  getDocFileController,
 } from "../controllers/Documento.controller";
 import { checkJwt } from "../middleware/session";
 import multerMiddleware from "../middleware/multerMiddleware";
@@ -31,5 +32,11 @@ router.delete("/documento/:id", checkJwt, logMiddleware, deleteDocController);
 router.get("/documento/:id", checkJwt, logMiddleware, getDocByIdController);
 //router.get("/", checkJwt, getAllDocsController);
 router.get("/documentos-paginated", checkJwt, logMiddleware, Pagination);
+router.get(
+  "/documento/file/:id",
+  checkJwt,
+  logMiddleware,
+  getDocFileController
+);
 ///documentos-paginated?page=1
 export default router;
