@@ -132,6 +132,7 @@ const Pagination = async (req: RequestExt, res: Response) => {
         asunto: doc.asunto,
         num_doc: doc.num_doc,
         niv_acc_min: doc.niv_acc_min,
+        id_tip:doc.id_tip,
       }));
 
     res.status(200).send({
