@@ -116,11 +116,13 @@ const getDocByIdController = async (req: RequestExt, res: Response) => {
 const Pagination = async (req: RequestExt, res: Response) => {
   const page = parseInt(req.query.page as string) || 1;
   const pageSize = 6;
+  const nivacc = req.user?.id_car;
 
   try {
     const { docs, total } = await DocumentoService.getAllDocsPaginated(
       page,
-      pageSize
+      pageSize,
+      nivacc
     );
     const totalPages = Math.ceil(total / pageSize);
 

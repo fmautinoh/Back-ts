@@ -16,7 +16,7 @@ class DocumentoService {
   static async createDoc(
     asunto: string,
     num_doc: string,
-    niv_acc_min: string,
+    niv_acc_min: number,
     pathDoc: string,
     id_tip: number,
     id_usu: number
@@ -91,11 +91,15 @@ class DocumentoService {
   }
   static async getAllDocsPaginated(
     page: number,
-    pageSize: number
+    pageSize: number,
+    nivacc: string,
   ): Promise<{ docs: IDocumento[]; total: number }> {
     try {
       const offset = (page - 1) * pageSize;
       const { count, rows } = await Documento.findAndCountAll({
+        where: {
+          niv_acc_min: nivacc  
+        },
         offset: offset,
         limit: pageSize,
       });
