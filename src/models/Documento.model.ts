@@ -10,7 +10,7 @@ class Documento extends Model<IDocumento, DocumentoCreationAttributes> implement
   public id_doc!: number;
   public asunto?: string;
   public num_doc?: string;
-  public niv_acc_min?: string;
+  public niv_acc_min?: number;
   public pathDoc?: string;
   public id_tip!: number;
   public id_usu!: number;
@@ -30,7 +30,7 @@ Documento.init({
     type: DataTypes.STRING(10),
   },
   niv_acc_min: {
-    type: DataTypes.STRING(10),
+    type: DataTypes.INTEGER,
   },
   pathDoc: {
     type: DataTypes.TEXT,
