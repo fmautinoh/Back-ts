@@ -136,7 +136,7 @@ const Pagination = async (req: RequestExt, res: Response) => {
         niv_acc_min: doc.niv_acc_min,
         id_tip:doc.id_tip,
       }));
-
+      console.log(filteredDocs);
     res.status(200).send({
       docs: filteredDocs,
       currentPage: page,
