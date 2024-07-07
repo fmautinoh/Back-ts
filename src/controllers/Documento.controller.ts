@@ -157,7 +157,7 @@ const getAllDocsController = async (req: RequestExt, res: Response) => {
     const docs = await DocumentoService.getAllDocs();
     // Filtrar los documentos según el nivel de acceso
     const filteredDocs = docs.filter(
-      (doc) => req.user?.id_car >= (doc.niv_acc_min ?? 0)
+      (doc) => req.user?.id_car >= (doc.niv_acc_min ?? 1)
     );
     res.status(200).send(filteredDocs);
   } catch (error) {

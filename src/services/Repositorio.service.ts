@@ -2,6 +2,7 @@ import Documento from "../models/Documento.model";
 import { IDocumento } from "../interfaces/Documento.Interface";
 import fs from 'fs';
 import path from 'path';
+import { Op } from "sequelize";
 
 class CustomError extends Error {
   statusCode: number;
@@ -98,7 +99,9 @@ class DocumentoService {
       const offset = (page - 1) * pageSize;
       const { count, rows } = await Documento.findAndCountAll({
         where: {
-          niv_acc_min: nivacc  
+          niv_acc_min: {
+            [Op.lte]: nivacc,  // Asegúrate de usar el operador lte (less than or equal)
+          },
         },
         offset: offset,
         limit: pageSize,
