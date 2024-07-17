@@ -38,5 +38,7 @@ router.get(
   logMiddleware,
   getDocFileController
 );
+
+router.delete("/documento/:id", checkJwt, logMiddleware, deleteDocController);
 ///documentos-paginated?page=1
 export default router;

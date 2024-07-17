@@ -1,7 +1,7 @@
 import Documento from "../models/Documento.model";
 import { IDocumento } from "../interfaces/Documento.Interface";
-import fs from 'fs';
-import path from 'path';
+import fs from "fs";
+import path from "path";
 import { Op } from "sequelize";
 
 class CustomError extends Error {
@@ -60,10 +60,14 @@ class DocumentoService {
   static async deleteDoc(id: number): Promise<boolean> {
     try {
       const doc = await Documento.findByPk(id);
+      const filePath = doc?.pathDoc;
       if (!doc) {
         throw new CustomError(404, "Document not found");
       }
       await doc.destroy();
+      if (filePath) {
+        fs.unlinkSync(path.resolve(filePath));
+      }
       return true;
     } catch (error) {
       throw new CustomError(500, "Error deleting document");
@@ -93,14 +97,14 @@ class DocumentoService {
   static async getAllDocsPaginated(
     page: number,
     pageSize: number,
-    nivacc: string,
+    nivacc: string
   ): Promise<{ docs: IDocumento[]; total: number }> {
     try {
       const offset = (page - 1) * pageSize;
       const { count, rows } = await Documento.findAndCountAll({
         where: {
           niv_acc_min: {
-            [Op.lte]: nivacc,  // Asegúrate de usar el operador lte (less than or equal)
+            [Op.lte]: nivacc, // Asegúrate de usar el operador lte (less than or equal)
           },
         },
         offset: offset,
