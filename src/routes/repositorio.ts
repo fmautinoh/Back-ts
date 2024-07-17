@@ -21,7 +21,7 @@ router.post(
   logMiddleware,
   createDocController
 );
-router.put(
+router.patch(
   "/documento/:id",
   multerMiddleware.single("pathDoc"),
   checkJwt,

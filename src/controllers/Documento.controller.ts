@@ -56,6 +56,9 @@ const updateDocController = async (req: Request, res: Response) => {
   const newData = req.body;
   const pathDoc = req.file?.path;
 
+  console.log("Datos recibidos para actualizar:", newData); // Verifica los datos recibidos
+  console.log("Archivo recibido:", pathDoc); // Verifica el archivo recibido
+
   try {
     const updatedDoc = await DocumentoService.updateDoc(
       parseInt(id),
@@ -136,7 +139,7 @@ const Pagination = async (req: RequestExt, res: Response) => {
         niv_acc_min: doc.niv_acc_min,
         id_tip:doc.id_tip,
       }));
-      console.log(filteredDocs);
+      //console.log(filteredDocs);
     res.status(200).send({
       docs: filteredDocs,
       currentPage: page,

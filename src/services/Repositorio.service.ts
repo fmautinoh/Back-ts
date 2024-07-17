@@ -47,13 +47,49 @@ class DocumentoService {
       if (!docUpdate) {
         throw new CustomError(404, "Document not found");
       }
-      if (pathDoc) {
-        newData.pathDoc = pathDoc;
+
+      const updatedData: Partial<IDocumento> = {};
+
+      // Actualizar campo 'asunto' si está definido en newData
+      if (newData.asunto !== undefined) {
+        updatedData.asunto = newData.asunto;
+      } else {
+        updatedData.asunto = docUpdate.asunto;
       }
-      await docUpdate.update(newData);
-      return docUpdate;
+
+      // Actualizar campo 'num_doc' si está definido en newData
+      if (newData.num_doc !== undefined) {
+        updatedData.num_doc = newData.num_doc;
+      } else {
+        updatedData.num_doc = docUpdate.num_doc;
+      }
+
+      // Actualizar campo 'niv_acc_min' si está definido en newData
+      if (newData.niv_acc_min !== undefined) {
+        updatedData.niv_acc_min = newData.niv_acc_min;
+      } else {
+        updatedData.niv_acc_min = docUpdate.niv_acc_min;
+      }
+
+      // Actualizar campo 'pathDoc' si está definido en newData
+      if (newData.pathDoc !== undefined) {
+        updatedData.pathDoc = newData.pathDoc;
+      } else {
+        updatedData.pathDoc = docUpdate.pathDoc;
+      }
+
+      // Actualizar campos fijos
+      updatedData.id_tip = newData.id_tip ?? docUpdate.id_tip;
+      updatedData.id_usu = newData.id_usu ?? docUpdate.id_usu;
+
+      console.log("Datos antes de actualizar:", updatedData);
+
+      // Aplicar las actualizaciones al documento encontrado
+      const update = await docUpdate.update(updatedData);
+
+      return update;
     } catch (error) {
-      throw new CustomError(500, "Error updating document");
+      throw error; // Re-throw the error for proper handling in the controller
     }
   }
 
